@@ -9,7 +9,9 @@ const router = Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    // store in base directory
+    cb(null, './uploads/');
+    // cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     /** generate a unique name for the image. **/
