@@ -10,7 +10,7 @@ const router = Router();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // store in base directory
-    cb(null, './uploads/');
+    cb(null, __dirname);
     // cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
