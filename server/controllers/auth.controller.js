@@ -61,7 +61,7 @@ const register = async (req, res) => {
       `Verify your email address`,
       `<p style="text-align: center">Thank you for signing up to Payback</p>
       <p>In order to get the most out of your account, it is important that you verify your email address by clicking the button below:</p>
-      <p style="text-align:center"><a href="${config.frontendUrl}/verify-email?email=${req.body.email}" 
+      <p style="text-align:center"><a href="${config.frontendUrl}/verify-email/?email=${req.body.email}" 
       style="text-decoration: none; color: white; padding: 3px; 
       background-color: #4E7AC7">Verify your email</a> </p>
       `
@@ -143,9 +143,9 @@ export const verification = async (req, res) => {
     sendMail(req.body.email,
       `Email verified`,
       `<p style="text-align: center">Congratulations! Your account is now verified</p>
-      <p style="text-align:center">< href="${config.frontendUrl}/login" 
+      <p style="text-align:center"><a href="${config.frontendUrl}/login" 
       style="text-decoration: none; color: white; padding: 3px; 
-      background-color: #4E7AC7">Get started</p>
+      background-color: #4E7AC7">Get started</a></p>
       `
     );
     return res.status(200).json({
