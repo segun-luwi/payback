@@ -45,6 +45,7 @@
     "node": "16.x"
   },
   "devDependencies": {
+    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "rimraf": "^3.0.2"
   }
