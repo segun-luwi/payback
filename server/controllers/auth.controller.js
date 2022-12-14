@@ -143,7 +143,7 @@ export const verification = async (req, res) => {
     sendMail(req.body.email,
       `Email verified`,
       `<p style="text-align: center">Congratulations! Your account is now verified</p>
-      <p style="text-align:center"><a href="${config.frontendUrl}/login" 
+      <p style="text-align:center"><a href="${config.frontendUrl}" 
       style="text-decoration: none; color: white; padding: 3px; 
       background-color: #4E7AC7">Get started</a></p>
       `
