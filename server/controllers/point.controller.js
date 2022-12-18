@@ -16,8 +16,9 @@ const addPoints = async (req, res) => {
     ));
   }
   // check image upload validation
-  var tmp_path = req.file? req.file.path : null;
+  // var tmp_path = req.file? req.file.path : null;
   var tmp_name = req.file? req.file.filename : null;
+  var tmp_path = `${__dirname}/../../uploads/${tmp_name}`;
   // console.log(tmp_name, 'tmp_name');
   // console.log(tmp_path, 'tmp_path');
   if(!tmp_path) {
