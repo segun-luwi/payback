@@ -5,7 +5,6 @@ import responses from '../utils/responses';
 import fs, { unlink } from 'fs';
 import axios from 'axios';
 import AWS from 'aws-sdk';
-import path from 'path';
 
 const addPoints = async (req, res) => {
   // get store from form data
@@ -21,10 +20,9 @@ const addPoints = async (req, res) => {
   // var tmp_path = "http://" +
   // req.get("host") +
   // "/uploads/" + tmp_name;
-  var tmp_path = path.join(__dirname,`/../../uploads/${tmp_name}`);
-  const fileUrl = new URL('file://'+tmp_path);
+  var tmp_path = `${__dirname}/${tmp_name}`;
   // console.log(tmp_name, 'tmp_name');
-  console.log(fileUrl, 'tmp_path');
+  console.log(tmp_path, 'tmp_path');
   if(!tmp_path) {
     return res.status(400).json(responses.error(
       'Please upload an image',
@@ -36,7 +34,7 @@ const addPoints = async (req, res) => {
     secretAccessKey: config.amazon_s3_access_secret,
   })
 
-  const blob = fs.readFileSync(fileUrl);
+  const blob = fs.readFileSync(tmp_path);
   console.log(blob, 'blob');
   try {
     const uploadedImage = await s3.upload({
@@ -47,7 +45,7 @@ const addPoints = async (req, res) => {
     }).promise()
     // console.log(uploadedImage.Location, 'uploadedImage');
     try {
-      unlink(fileUrl, (err) => {
+      unlink(tmp_path, (err) => {
         if (err) {
           console.log(err, 'err');
         }
@@ -144,7 +142,7 @@ const addPoints = async (req, res) => {
   } catch (error) {
     console.log(error, 'error');
     try {
-      unlink(fileUrl, (err) => {
+      unlink(tmp_path, (err) => {
         if (err) {
           console.log(err, 'err');
         }
