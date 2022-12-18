@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import addPoints, { getPoints } from '../controllers/point.controller';
 import multer from 'multer';
+import path from 'path';
 
 const router = Router();
 // const upload = multer({ dest: 'uploads/' });
@@ -10,7 +11,7 @@ const router = Router();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // store in base directory
-    cb(null, `${__dirname}/../../uploads/`);
+    cb(null, path.join(__dirname, '/../../uploads/'));
     // cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {

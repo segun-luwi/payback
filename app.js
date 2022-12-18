@@ -7,6 +7,7 @@ import traceLogger from './server/logger/traceLogger';
 import routes from './server/routes';
 import config from './server/config';
 import errorhandler from 'errorhandler';
+import path from 'path';
 
 // initialize express
 const app = express();
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
   res.json({ massage: 'Welcome to Payback API' });
 });
 app.use('/api/v1', routes);
+app.use("/uploads/", express.static(path.join(__dirname, '/uploads/')))
 
 app.use('*', notFound);
 app.use(errorhandler());

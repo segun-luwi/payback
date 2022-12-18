@@ -5,7 +5,7 @@ import responses from '../utils/responses';
 import fs, { unlink } from 'fs';
 import axios from 'axios';
 import AWS from 'aws-sdk';
-import { off } from 'process';
+import path from 'path';
 
 const addPoints = async (req, res) => {
   // get store from form data
@@ -18,9 +18,13 @@ const addPoints = async (req, res) => {
   // check image upload validation
   // var tmp_path = req.file? req.file.path : null;
   var tmp_name = req.file? req.file.filename : null;
-  var tmp_path = `${__dirname}/../../uploads/${tmp_name}`;
+  // var tmp_path = "http://" +
+  // req.get("host") +
+  // "/upload/" + tmp_name;
   // console.log(tmp_name, 'tmp_name');
-  // console.log(tmp_path, 'tmp_path');
+  var tmp_path = path.join(__dirname,`/../../uploads/${tmp_name}`);
+  // console.log(tmp_name, 'tmp_name');
+  console.log(tmp_path, 'tmp_path');
   if(!tmp_path) {
     return res.status(400).json(responses.error(
       'Please upload an image',
