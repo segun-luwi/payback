@@ -14,6 +14,10 @@ const config = {
   mailSender: process.env.MAIL_SENDER,
   mailUsername: process.env.MAIL_USERNAME,
   mailPassword: process.env.MAIL_PASSWORD,
+  taggun: process.env.TAGGUN,
+  amazon_s3_access_key_id: process.env.AMAZON_S3_ACCESS_KEY_ID,
+  amazon_s3_access_secret: process.env.AMAZON_S3_ACCESS_SECRET,
+  amazon_s3_bucket: process.env.AMAZON_S3_BUCKET,
 };
 
 export default config;
