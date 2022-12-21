@@ -3,9 +3,9 @@ import { userSignIns, userSignUps, totalUsers, scanReceipts } from '../controlle
 
 const router = Router();
 
-router.post('/receipts', scanReceipts);
-router.post('/users', totalUsers);
-router.post('/userSignIns', userSignIns);
-router.post('/userSignUps', userSignUps);
+router.get('/receipts', scanReceipts);
+router.get('/users', totalUsers);
+router.get('/userSignIns', userSignIns);
+router.get('/userSignUps', userSignUps);
 
 export default router;
