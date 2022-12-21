@@ -1,13 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const Admin = sequelize.define('Admin', {
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
-    lga: DataTypes.STRING,
-    state: DataTypes.STRING,
-    age: DataTypes.STRING,
-    maritalStatus: DataTypes.STRING,
     gender: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING,
@@ -16,13 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     roleId: DataTypes.INTEGER,
     status: DataTypes.STRING,
   }, {});
-  User.associate = function(models) {
+  Admin.associate = function(models) {
     // associations can be defined here
-    User.hasOne(models.Point, {
-      foreignKey: 'userId',
-      as: 'points',
-      onDelete: 'CASCADE',
-    });
   }
-  return User;
+  return Admin;
 };

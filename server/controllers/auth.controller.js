@@ -13,10 +13,9 @@ const register = async (req, res) => {
     lastName: Joi.string().required(),
     phone: Joi.string().required(),
     email: Joi.string().email().required(),
-    lcda: Joi.string(),
     lga: Joi.string().required(),
     state: Joi.string().required(),
-    age: Joi.number().required(),
+    age: Joi.string().required(),
     maritalStatus: Joi.string().required(),
     gender: Joi.string().required(),
     username: Joi.string().required(),
@@ -98,6 +97,40 @@ export const login = async (req, res) => {
         model: models.Point,
         as: 'points',
       }],
+  });
+
+  if(!userCheck  || !userCheck.dataValues) {
+    return res.status(400).json({
+      message: 'Username does not exist',
+    });
+  }
+  const user = userCheck.dataValues;
+  // check if password is correct
+  const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+  if(!isPasswordCorrect) {
+    return res.status(400).json({
+      message: 'Password is incorrect',
+    });
+  }
+  const token = signToken(user);
+  res.status(200).json({ token, user });
+}
+
+export const adminLogin = async (req, res) => {
+  const schema = Joi.object().keys({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+  const {username, password} = req.body;
+  // check if username exist
+  const userCheck = await models.Admin.findOne({
+    where: { username: username },
   });
 
   if(!userCheck  || !userCheck.dataValues) {
