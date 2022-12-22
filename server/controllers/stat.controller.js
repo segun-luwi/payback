@@ -22,17 +22,47 @@ export const totalUsers = async (req, res) => {
 }
 
 export const userSignIns = async (req, res) => {
+  const schema = Joi.object().keys({
+    period: Joi.string().required()
+  });
+  const { error } = schema.validate(req.query);
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
   try {
-    const users = await models.User.count({
+    const { period } = req.query;
+    const date = new Date();
+    let startDate;
+    let endDate;
+    if(period === 'daily') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    } else if(period === 'weekly') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
+      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    } else if(period === 'monthly') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      endDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    } else {
+      return res.status(400).json(responses.error(
+        'Period is invalid'
+      ));
+    }
+    const users = await models.UserSignIn.count({
       where: {
-        lastLogin: {
-          [sequelize.Op.not]: null,
+        date: {
+          [Op.between]: [startDate, endDate],
         },
       },
     });
+    const data = {
+      total: users,
+    }
     return res.status(200).json(responses.success(
-      'Total users',
-      users,
+      'Total users signed in',
+      data,
     ));
   } catch (error) {
     return res.status(500).json(responses.error(

@@ -5,7 +5,7 @@ import Joi from 'joi';
 import sendMail from '../services/email.service';
 import config from '../config';
 import responses from '../utils/responses';
-// const sequelize = require("sequelize");
+const { Op } = require("sequelize");
 
 const register = async (req, res) => {
   const schema = Joi.object().keys({
@@ -113,6 +113,25 @@ export const login = async (req, res) => {
     });
   }
   const token = signToken(user);
+  // add user sign in to UserSignIn table for today if it doesn't exist
+  const today = new Date();
+  const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  const userSignIn = await models.UserSignIn.findOne({
+    where: {
+      userId: user.id,
+      date: {
+        [Op.between]: [startDate, endDate]
+      },
+    },
+  });
+  if(!userSignIn) {
+    await models.UserSignIn.create({
+      userId: user.id,
+      date: date,
+    });
+  }
   res.status(200).json({ token, user });
 }
 
