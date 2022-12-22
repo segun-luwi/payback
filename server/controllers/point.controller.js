@@ -81,7 +81,13 @@ const addPoints = async (req, res) => {
       }
 
       const total = response.data.totalAmount.data || 0;
+      let receiptData = {
+        userId: req.user.id,
+        amount: total,
+        points: 0,
+      };
       if(total === 0) {
+        await models.Receipt.create(receiptData);
         return res.status(400).json(responses.error(
           'No total amount found',
         ));
@@ -91,6 +97,8 @@ const addPoints = async (req, res) => {
       if((divided > 0)){
         userPoints = divided * 10;
       }
+      receiptData.points = userPoints;
+      await models.Receipt.create(receiptData);
       // check if user has a store with points
       const pointExist = await models.Point.findOne({
         where: {
@@ -112,7 +120,7 @@ const addPoints = async (req, res) => {
           },
         });
         return res.status(200).json(responses.success(
-          'Point updated successfully',
+          'Points updated successfully',
           point,
         ));
       }
@@ -120,7 +128,7 @@ const addPoints = async (req, res) => {
       req.body.points = userPoints;
       const point = await models.Point.create(req.body);
       return res.status(201).json(responses.success(
-        'Point added successfully',
+        'Points added successfully',
         point,
       ));
     })

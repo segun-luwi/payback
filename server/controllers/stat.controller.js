@@ -2,43 +2,17 @@ const models = require("../database/models");
 import Joi from 'joi';
 import config from '../config';
 import responses from '../utils/responses';
+const { Op } = require("sequelize");
 
 export const totalUsers = async (req, res) => {
-  const schema = Joi.object().keys({
-    period: Joi.string().required()
-  });
-  const { error } = schema.validate(req.body);
-  if (error) {
-    return res.status(400).json({
-      message: error.details[0].message,
-    });
-  }
   try {
-    // check period then get users and put them according to the days or weeks or months
-    const { period } = req.body;
-    const date = new Date();
-    let startDate;
-    let endDate;
-    if(period === 'daily') {
-      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-    } else if(period === 'weekly') {
-      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
-      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-    } else if(period === 'monthly') {
-      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30);
-      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    const users = await models.User.count();
+    const data = {
+      total : users
     }
-    const users = await models.User.findAll({
-      where: {
-        createdAt: {
-          [sequelize.Op.between]: [startDate, endDate],
-        },
-      },
-    });
     return res.status(200).json(responses.success(
       'Total users',
-      users,
+      data,
     ));
   } catch (error) {
     return res.status(500).json(responses.error(
@@ -68,15 +42,47 @@ export const userSignIns = async (req, res) => {
 }
 
 export const userSignUps = async (req, res) => {
+  const schema = Joi.object().keys({
+    period: Joi.string().required()
+  });
+  const { error } = schema.validate(req.query);
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
   try {
+    const { period } = req.query;
+    const date = new Date();
+    let startDate;
+    let endDate;
+    if(period === 'daily') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    } else if(period === 'weekly') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
+      endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+    } else if(period === 'monthly') {
+      startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      endDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    } else {
+      return res.status(400).json(responses.error(
+        'Period is invalid'
+      ));
+    }
     const users = await models.User.count({
       where: {
-        lastLogin: null,
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        },
       },
     });
+    const data = {
+      total: users,
+    }
     return res.status(200).json(responses.success(
       'Total users',
-      users,
+      data,
     ));
   } catch (error) {
     return res.status(500).json(responses.error(
@@ -114,13 +120,16 @@ export const scanReceipts = async (req, res) => {
     const receipts = await models.Receipt.count({
       where: {
         createdAt: {
-          [sequelize.Op.between]: [startDate, endDate],
+          [Op.between]: [startDate, endDate],
         },
       },
     });
+    const data = {
+      total: receipts,
+    }
     return res.status(200).json(responses.success(
       'Total receipts',
-      receipts,
+      data,
     ));
   } catch (error) {
     return res.status(500).json(responses.error(
