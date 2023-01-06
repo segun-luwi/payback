@@ -9,6 +9,7 @@ export const totalUsers = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     let users;
+    let usersData;
     if(startDate && endDate) {
       users = await models.User.findAll({
         attributes: [
@@ -22,6 +23,13 @@ export const totalUsers = async (req, res) => {
         },
         group: ['state'],
       });
+      usersData = await models.User.findAll({
+        where: {
+          createdAt: {
+            [Op.between]: [startDate, endDate],
+          },
+        },
+      });
     } else {
       users = await models.User.findAll({
         attributes: [
@@ -30,6 +38,7 @@ export const totalUsers = async (req, res) => {
         ],
         group: ['state'],
       });
+      usersData = await models.User.findAll();
     }
     // count total users
     const total = users.reduce((acc, user) => {
@@ -50,6 +59,7 @@ export const totalUsers = async (req, res) => {
     });
     const data = {
       users,
+      usersData,
       total,
       lastMonthUsers,
     }
