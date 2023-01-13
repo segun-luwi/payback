@@ -5,6 +5,7 @@ import Joi from 'joi';
 import sendMail from '../services/email.service';
 import config from '../config';
 import responses from '../utils/responses';
+import { response } from 'express';
 const { Op } = require("sequelize");
 
 const register = async (req, res) => {

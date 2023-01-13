@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import addPoints, { getPoints } from '../controllers/point.controller';
+import addPoints, { getPoints, getResult } from '../controllers/point.controller';
 import multer from 'multer';
 import path from 'path';
 
@@ -42,5 +42,6 @@ const upload = multer({
 
 router.post('/add', upload.single('image'), addPoints);
 router.get('/', getPoints);
+router.get('/result', getResult);
 
 export default router;

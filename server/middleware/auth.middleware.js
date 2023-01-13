@@ -19,7 +19,7 @@ const auth = async (req, res, next) => {
 
 export const checkRole = (roleId) => (req, res, next) => {
   if (req.user.roleId !== roleId) {
-    return res.status(403).send({ auth: false, message: 'You are not Unauthorized to access this endpoint' });
+    return res.status(403).send({ auth: false, message: 'You are not authorized to access this endpoint' });
   }
   next();
 };

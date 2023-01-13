@@ -18,6 +18,7 @@ const config = {
   amazon_s3_access_key_id: process.env.AMAZON_S3_ACCESS_KEY_ID,
   amazon_s3_access_secret: process.env.AMAZON_S3_ACCESS_SECRET,
   amazon_s3_bucket: process.env.AMAZON_S3_BUCKET,
+  tab_scanner: process.env.TAB_SCANNER,
 };
 
 export default config;

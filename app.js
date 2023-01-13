@@ -8,6 +8,7 @@ import routes from './server/routes';
 import config from './server/config';
 import errorhandler from 'errorhandler';
 import path from 'path';
+import { getResult } from './server/controllers/point.controller';
 
 // initialize express
 const app = express();
@@ -41,5 +42,9 @@ app.listen(PORT, () => {
   process.stdout.write(`app is listening on port ${PORT}`);
 });
 
+var cron = require('node-cron');
 
+cron.schedule('*/5 * * * *', () => {
+  getResult();
+});
 export default app;

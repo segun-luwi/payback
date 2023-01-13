@@ -2,32 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Pins', {
+    await queryInterface.createTable('Jobs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      pin: {
-        type: Sequelize.STRING,
-        unique: true,
-        index: true,
-      },
-      points: {
-        type: Sequelize.DOUBLE
-      },
       userId: {
         type: Sequelize.INTEGER
+      },
+      token: {
+        type: Sequelize.STRING
+      },
+      code: {
+        type: Sequelize.INTEGER
+      },
+      duplicate: {
+        type: Sequelize.BOOLEAN
       },
       store: {
         type: Sequelize.STRING
       },
       status: {
         type: Sequelize.STRING
-      },
-      dateUsed: {
-        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Pins');
+    await queryInterface.dropTable('Jobs');
   }
 };

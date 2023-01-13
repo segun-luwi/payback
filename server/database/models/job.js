@@ -1,20 +1,20 @@
 module.exports = (sequelize, DataTypes) => {
-  const Pin = sequelize.define('Pin', {
-    pin: DataTypes.STRING,
-    points: DataTypes.DOUBLE,
+  const Job = sequelize.define('Job', {
     userId: DataTypes.INTEGER,
+    token: DataTypes.STRING,
+    code: DataTypes.INTEGER,
+    duplicate: DataTypes.BOOLEAN,
     store: DataTypes.STRING,
     status: DataTypes.STRING,
-    dateUsed: DataTypes.DATE
   }, {});
-  Pin.associate = function(models) {
+  Job.associate = function(models) {
     // associations can be defined here
-    Pin.belongsTo(models.User, {
+    Job.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'user',
       onDelete: 'CASCADE',
     });
   }
 
-  return Pin;
+  return Job;
 };
