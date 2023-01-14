@@ -232,7 +232,9 @@ export const getResult = async () => {
         userPoints = divided * 10;
       }
       receiptData.points = userPoints;
-      await models.Receipt.create(receiptData);
+      if(total > 0) {
+        await models.Receipt.create(receiptData);
+      }
       // check if user has a store with points
       const pointExist = await models.Point.findOne({
         where: {
