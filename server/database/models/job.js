@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     code: DataTypes.INTEGER,
     duplicate: DataTypes.BOOLEAN,
     store: DataTypes.STRING,
+    purchaseLocation: DataTypes.STRING,
     status: DataTypes.STRING,
   }, {});
   Job.associate = function(models) {

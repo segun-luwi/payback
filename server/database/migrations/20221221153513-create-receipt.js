@@ -18,6 +18,12 @@ module.exports = {
       points: {
         type: Sequelize.DOUBLE
       },
+      store: {
+        type: Sequelize.STRING
+      },
+      purchaseLocation: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
