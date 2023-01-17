@@ -365,3 +365,33 @@ export const scanReceipts = async (req, res) => {
     ));
   }
 }
+
+export const totalPurchaseByLocation = async (req, res) => {
+  //Check where the purchase Location is
+  let neighborhoodstore = 0;
+  let openMarket = 0;
+  let ecommerce = 0;
+  let supermarket = 0;
+  // get the total number of receipts from the database then map through it
+  const receipts = await models.Receipt.findAll();
+  receipts.map((receipt) => {
+    if (receipt.purchaseLocation === "Neighborhood store") {
+      neighborhoodstore++;
+    } else if (receipt.purchaseLocation === "Open market") {
+      openMarket++;
+    } else if (receipt.purchaseLocation === "Ecommerce") {
+      ecommerce++;
+    } else if (receipt.purchaseLocation === "Supermarket") {
+      supermarket++;
+    }
+  });
+  const total = neighborhoodstore + openMarket + ecommerce + supermarket;
+  const data = {
+    neighborhoodstore,
+    openMarket,
+    ecommerce,
+    supermarket,
+    total,
+  };
+  return res.status(200).json(responses.success("Total purchase locations", data));
+};

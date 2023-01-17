@@ -11,6 +11,7 @@ const rp = require("request-promise");
 const addPoints = async (req, res) => {
   // get store from form data
   const store = req.body.store;
+  const purchaseLocation = req.body.purchaseLocation  || 'N/A';
   if(!store) {
     return res.status(400).json(responses.error(
       'Please add the store',
@@ -157,17 +158,18 @@ const addPoints = async (req, res) => {
       'Error extracting text from image',
     ));
   }
-  if(data.duplicate == true) {
-    return res.status(400).json(responses.error(
-      'This receipt has already been submitted',
-    ));
-  }
+  // if(data.duplicate == true) {
+  //   return res.status(400).json(responses.error(
+  //     'This receipt has already been submitted',
+  //   ));
+  // }
   await models.Job.create({
     userId: req.user.id,
     token: data.token,
     code: data.code,
     duplicate: data.duplicate,
     store: store,
+    purchaseLocation,
     status: 'pending',
   });
   let pointExist = await models.Point.findOne({
@@ -222,6 +224,8 @@ export const getResult = async () => {
         userId: job.userId,
         amount: total,
         points: 0,
+        store: job.store,
+        purchaseLocation: job.purchaseLocation,
       };
       if(total === 0) {
         await models.Receipt.create(receiptData);

@@ -24,6 +24,9 @@ module.exports = {
       store: {
         type: Sequelize.STRING
       },
+      purchaseLocation: {
+        type: Sequelize.STRING
+      },
       status: {
         type: Sequelize.STRING
       },
