@@ -395,3 +395,45 @@ export const totalPurchaseByLocation = async (req, res) => {
   };
   return res.status(200).json(responses.success("Total purchase locations", data));
 };
+
+export const totalPurchasedByBrand = async (req, res) => {
+  // get all the receipts from the database receipt model check each brand that is not null and count the number of times they appear
+  const receipts = await models.Receipt.findAll();
+  const brands = receipts.map((receipt) => receipt.brand);
+  const brandCount = {};
+  brands.forEach((brand) => {
+    if (brandCount[brand]) {
+      brandCount[brand]++;
+    } else {
+      brandCount[brand] = 1;
+    }
+  }
+  );
+  const data = {
+    brands: brandCount,
+    totalBrands: Object.keys(brandCount).length,
+    total: brands.length,
+  };
+  return res.status(200).json(responses.success("Total brands", data));
+};
+
+export const totalQuantityPurchasedByState = async (req, res) => {
+  // get all the receipts from the database receipt model check each state that is not null and count the number of times they appear
+  // const receipts = await models.Receipt.findAll();
+  // const quantities = receipts.map((receipt) => receipt.qty);
+  // const quantitiesCount = {};
+  // quantities.forEach((qty) => {
+  //   if (qty !== null) {
+  //     brandCount[brand]++;
+  //   } else {
+  //     brandCount[brand] = 1;
+  //   }
+  // }
+  // );
+  // const data = {
+  //   brands: brandCount,
+  //   totalBrands: Object.keys(brandCount).length,
+  //   total: brands.length,
+  // };
+  // return res.status(200).json(responses.success("Total brands", data));
+}
