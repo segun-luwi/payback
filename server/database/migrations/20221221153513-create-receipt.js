@@ -24,6 +24,12 @@ module.exports = {
       purchaseLocation: {
         type: Sequelize.STRING
       },
+      brand: {
+        type: Sequelize.STRING
+      },
+      qty: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
