@@ -432,6 +432,8 @@ export const totalQuantityPurchasedByState = async (req, res) => {
     const quantities = receipts.reduce((acc, receipt) => {
       if (receipt.qty != null) {
         return acc + receipt.qty;
+      } else {
+        return acc;
       }
     }, 0);
     // push the state and the total sum of quantities to the stateList array, if the state already exists, add the quantities to the existing state
@@ -447,5 +449,5 @@ export const totalQuantityPurchasedByState = async (req, res) => {
     totalStates: Object.keys(stateList).length,
     total: Object.values(stateList).reduce((acc, val) => acc + val, 0),
   };
-  return res.status(200).json(responses.success("Total brands", data));
+  return res.status(200).json(responses.success("Total quantities", data));
 }
