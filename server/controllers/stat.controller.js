@@ -419,21 +419,33 @@ export const totalPurchasedByBrand = async (req, res) => {
 
 export const totalQuantityPurchasedByState = async (req, res) => {
   // get all the receipts from the database receipt model check each state that is not null and count the number of times they appear
-  // const receipts = await models.Receipt.findAll();
-  // const quantities = receipts.map((receipt) => receipt.qty);
-  // const quantitiesCount = {};
-  // quantities.forEach((qty) => {
-  //   if (qty !== null) {
-  //     brandCount[brand]++;
-  //   } else {
-  //     brandCount[brand] = 1;
-  //   }
-  // }
-  // );
-  // const data = {
-  //   brands: brandCount,
-  //   totalBrands: Object.keys(brandCount).length,
-  //   total: brands.length,
-  // };
-  // return res.status(200).json(responses.success("Total brands", data));
+  const getUsers = await models.User.findAll();
+  let stateList = {};
+  await Promise.all(getUsers.map(async (user) => {
+    // get the total sum of quantities from the receipt model that matches the user id
+    const receipts = await models.Receipt.findAll({
+      where: {
+        userId: user.id,
+      },
+    });
+    // use reduce to get the total sum of quantities
+    const quantities = receipts.reduce((acc, receipt) => {
+      if (receipt.qty != null) {
+        return acc + receipt.qty;
+      }
+    }, 0);
+    // push the state and the total sum of quantities to the stateList array, if the state already exists, add the quantities to the existing state
+    if (stateList[user.state]) {
+      stateList[user.state] += quantities;
+    } else {
+      stateList[user.state] = quantities;
+    }
+  }));
+  
+  const data = {
+    stateList,
+    totalStates: Object.keys(stateList).length,
+    total: Object.values(stateList).reduce((acc, val) => acc + val, 0),
+  };
+  return res.status(200).json(responses.success("Total brands", data));
 }
