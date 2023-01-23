@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
     points: DataTypes.DOUBLE,
     store: DataTypes.STRING,
     purchaseLocation: DataTypes.STRING,
-    brand: DataTypes.STRING,
     qty: DataTypes.INTEGER,
   }, {});
   Receipt.associate = function(models) {

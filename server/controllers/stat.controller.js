@@ -398,8 +398,8 @@ export const totalPurchaseByLocation = async (req, res) => {
 
 export const totalPurchasedByBrand = async (req, res) => {
   // get all the receipts from the database receipt model check each brand that is not null and count the number of times they appear
-  const receipts = await models.Receipt.findAll();
-  const brands = receipts.map((receipt) => receipt.brand);
+  const receipts = await models.Brand.findAll();
+  const brands = receipts.map((receipt) => receipt.brandName);
   const brandCount = {};
   brands.forEach((brand) => {
     if (brandCount[brand]) {
