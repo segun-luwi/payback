@@ -385,7 +385,7 @@ export const totalPurchaseByLocation = async (req, res) => {
       supermarket++;
     }
   });
-  const total = neighborhoodstore + openMarket + ecommerce + supermarket;
+  const total = neighbourhoodstore + openMarket + ecommerce + supermarket;
   const data = {
     neighbourhoodstore,
     openMarket,
