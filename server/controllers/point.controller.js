@@ -163,9 +163,8 @@ const addPoints = async (req, res) => {
       'This receipt has already been submitted',
     ));
   }
-  const brands = ['Milo', 'Peak Milk', 'Hypo', 'Pepsi', 'Coca-Cola', 'Mentos'];
-  const randomNumber = Math.floor(Math.random() * brands.length);
-  const brand = brands[randomNumber];
+
+
   await models.Job.create({
     userId: req.user.id,
     token: data.token,
@@ -173,7 +172,6 @@ const addPoints = async (req, res) => {
     duplicate: data.duplicate,
     store: store,
     purchaseLocation,
-    brand,
     status: 'pending',
   });
   let pointExist = await models.Point.findOne({
@@ -239,12 +237,14 @@ export const getResult = async () => {
         points: 0,
         store: job.store,
         purchaseLocation: job.purchaseLocation,
-        brand: job.brand,
         qty: totalQty,
       };
+      let receiptId = 0;
       if(total === 0) {
-        await models.Receipt.create(receiptData);
+        const receiptInfo = await models.Receipt.create(receiptData);
+        receiptId = receiptInfo.id;
       }
+      
       const divided =  Math.round(total / 1000);
       let userPoints = 5;
       if((divided > 0)){
@@ -252,8 +252,21 @@ export const getResult = async () => {
       }
       receiptData.points = userPoints;
       if(total > 0) {
-        await models.Receipt.create(receiptData);
+        const receiptInfo = await models.Receipt.create(receiptData);
+        receiptId = receiptInfo.id;
       }
+      try {
+        await Promise.all(data.result.lineItems.map(async (item) => {
+          await models.Brand.create({
+            receiptId,
+            brandName: item.descClean,
+            qty: item.qty,
+          });
+        }));
+      } catch (error) {
+        console.log(error, 'error');
+      }
+
       // check if user has a store with points
       const pointExist = await models.Point.findOne({
         where: {
