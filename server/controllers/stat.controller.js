@@ -368,26 +368,26 @@ export const scanReceipts = async (req, res) => {
 
 export const totalPurchaseByLocation = async (req, res) => {
   //Check where the purchase Location is
-  let neighborhoodstore = 0;
+  let neighbourhoodstore = 0;
   let openMarket = 0;
   let ecommerce = 0;
   let supermarket = 0;
   // get the total number of receipts from the database then map through it
   const receipts = await models.Receipt.findAll();
   receipts.map((receipt) => {
-    if (receipt.purchaseLocation === "Neighborhood store") {
-      neighborhoodstore++;
-    } else if (receipt.purchaseLocation === "Open market") {
+    if (receipt.purchaseLocation === "neighbourhoodstore") {
+      neighbourhoodstore++;
+    } else if (receipt.purchaseLocation === "openMarket") {
       openMarket++;
-    } else if (receipt.purchaseLocation === "Ecommerce") {
+    } else if (receipt.purchaseLocation === "ecommerce") {
       ecommerce++;
-    } else if (receipt.purchaseLocation === "Supermarket") {
+    } else if (receipt.purchaseLocation === "supermarket") {
       supermarket++;
     }
   });
   const total = neighborhoodstore + openMarket + ecommerce + supermarket;
   const data = {
-    neighborhoodstore,
+    neighbourhoodstore,
     openMarket,
     ecommerce,
     supermarket,
