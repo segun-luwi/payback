@@ -151,12 +151,12 @@ export const totalUsersByGender = async (req, res) => {
       },
     };
     const totalUsers = await models.User.count();
-    const totalUserMale = await models.User.count({
+    let totalUserMale = await models.User.count({
         where: {
           gender: 'male'
         }
     });
-    const totalUserFemale = await models.User.count({
+    let totalUserFemale = await models.User.count({
         where: {
           gender: 'female'
         }
@@ -171,7 +171,21 @@ export const totalUsersByGender = async (req, res) => {
         where: whereData,
         group: ['state'],
       });
-      
+      totalUsers = await models.User.count({
+        where: whereData,
+      });
+      totalUserMale = await models.User.count({
+        where: {
+          ...whereData,
+          gender: 'male'
+        }
+      });
+      totalUserFemale = await models.User.count({
+        where: {
+          ...whereData,
+          gender: 'female'
+        }
+      });
       // map for each state and get the total number based on the gender
       genders = await Promise.all(users.map(async (user) => {
         const state = user.dataValues.state;
@@ -258,7 +272,7 @@ export const totalUsersByAge = async (req, res) => {
         [Op.between]: [startDate, endDate],
       },
     };
-    const totalUsers = await models.User.count();
+    let totalUsers = await models.User.count();
     if(startDate && endDate) {
       ages = await models.User.findAll({
         attributes: [
@@ -267,6 +281,9 @@ export const totalUsersByAge = async (req, res) => {
         ],
         where: whereData,
         group: ['age'],
+      });
+      totalUsers = await models.User.count({
+        where: whereData,
       });
     } else {
       ages = await models.User.findAll({
