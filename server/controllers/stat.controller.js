@@ -150,7 +150,7 @@ export const totalUsersByGender = async (req, res) => {
         [Op.between]: [startDate, endDate],
       },
     };
-    const totalUsers = await models.User.count();
+    let totalUsers = await models.User.count();
     let totalUserMale = await models.User.count({
         where: {
           gender: 'male'
