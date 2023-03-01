@@ -298,9 +298,21 @@ export const getPoints = async (req, res) => {
       userId: req.user.id,
     },
   });
+  let totalPoints = 0;
+  try {
+    totalPoints = points.reduce((acc, item) => {
+      return acc + item.points;
+    }, 0);
+  } catch (error) {
+    console.log(error, 'error');
+  }
+  const data = {
+    stores: points,
+    totalPoints,
+  }
   return res.status(200).json(responses.success(
     'Points retrieved successfully',
-    points,
+    data,
   ));
 };
 export default addPoints;
