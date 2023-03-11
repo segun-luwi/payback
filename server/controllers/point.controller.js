@@ -249,6 +249,8 @@ export const getResult = async () => {
       let userPoints = 5;
       if((divided > 0)){
         userPoints = divided * 10;
+      } else if  (total >= 500) {
+        userPoints = 10;
       }
       receiptData.points = userPoints;
       if(total > 0) {
@@ -257,10 +259,28 @@ export const getResult = async () => {
       }
       try {
         await Promise.all(data.result.lineItems.map(async (item) => {
+          // check if item.descClean contains Local Sales
+          const itemDesc = item.descClean.toLowerCase()
+          if(itemDesc.includes('local sales') || itemDesc.includes('tax') || itemDesc.includes('total') || itemDesc.includes('subtotal') || itemDesc.includes('invoice')) {
+            return;
+          }
+          // award 10 points for each 1000 in lineTotal
+          const divided =  Math.round(item.lineTotal / 1000);
+          let points = 5;
+          if((divided > 0)){
+            points = divided * 10;
+          } else if  (item.lineTotal >= 500) {
+            points = 10;
+          } else if (item.lineTotal == 0) {
+            points = 0;
+          }
+          
           await models.Brand.create({
             receiptId,
             brandName: item.descClean,
             qty: item.qty,
+            amount: item.lineTotal,
+            points,
           });
         }));
       } catch (error) {

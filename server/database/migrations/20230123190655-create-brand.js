@@ -18,6 +18,12 @@ module.exports = {
       qty: {
         type: Sequelize.INTEGER
       },
+      amount: {
+        type: Sequelize.DOUBLE
+      },
+      points: {
+        type: Sequelize.DOUBLE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
