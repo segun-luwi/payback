@@ -44,7 +44,7 @@ app.listen(PORT, () => {
 
 var cron = require('node-cron');
 
-cron.schedule('*/5 * * * *', () => {
-  getResult();
-});
+// cron.schedule('*/5 * * * *', () => {
+//   getResult();
+// });
 export default app;

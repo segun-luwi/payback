@@ -165,7 +165,7 @@ const addPoints = async (req, res) => {
   }
 
 
-  await models.Job.create({
+  const job = await models.Job.create({
     userId: req.user.id,
     token: data.token,
     code: data.code,
@@ -190,126 +190,251 @@ const addPoints = async (req, res) => {
       updatedAt: "2023-01-13T14:50:23.452Z"
     }
   }
+  // call getResult function to get result
+  const jobResult = await getResult(job.id);
   return res.status(200).json(responses.success(
     'Receipt submitted successfully',
-    pointExist,
+    {
+      store: store,
+      userId: req.user.id,
+      points: jobResult,
+      createdAt: "2022-12-22T09:44:42.429Z",
+      updatedAt: "2023-01-13T14:50:23.452Z"
+    },
   ));
 };
 
-export const getResult = async () => {
-  const jobs = await models.Job.findAll({
+export const getResult = async (jobId = null) => {
+  // added for immediate points execution
+  let pointR = 0;
+
+  // const jobs = await models.Job.findAll({
+  //   where: {
+  //     status: 'pending',
+  //   },
+  // });
+  const job = await models.Job.findOne({
     where: {
       status: 'pending',
+      id: jobId,
     },
   });
   
-  if(jobs.length > 0) {
-    await jobs.map (async (job) => {
-      const options = {
-        method: 'GET',
-        uri: `https://api.tabscanner.com/api/result/${job.token}`,
-        headers: {
-          'apikey': API_KEY
-        }
-      };
-      const result = await rp(options)
-      const data = JSON.parse(result);
-      if(data.code !== 202) {
-        return;
-      }
-      await models.Job.update(
-        { status:  'completed'},
-        { where: { token: job.token } },
-      );
-      const total = data.result.total || 0;
-      // get total of all qty of items in data.result.lineItems
-      let totalQty = 0;
-      try {
-        totalQty = data.result.lineItems.reduce((acc, item) => {
-          return acc + item.qty;
-        }, 0);
-      } catch (error) {
-        console.log(error, 'error');
-      }
-      let receiptData = {
-        userId: job.userId,
-        amount: total,
-        points: 0,
-        store: job.store,
-        purchaseLocation: job.purchaseLocation,
-        qty: totalQty,
-      };
-      let receiptId = 0;
-      if(total === 0) {
-        const receiptInfo = await models.Receipt.create(receiptData);
-        receiptId = receiptInfo.id;
-      }
+  // if(jobs.length > 0) {
+  //   await jobs.map (async (job) => {
+  //     const options = {
+  //       method: 'GET',
+  //       uri: `https://api.tabscanner.com/api/result/${job.token}`,
+  //       headers: {
+  //         'apikey': API_KEY
+  //       }
+  //     };
+  //     const result = await rp(options)
+  //     const data = JSON.parse(result);
+  //     if(data.code !== 202) {
+  //       return;
+  //     }
+  //     await models.Job.update(
+  //       { status:  'completed'},
+  //       { where: { token: job.token } },
+  //     );
+  //     const total = data.result.total || 0;
+  //     // get total of all qty of items in data.result.lineItems
+  //     let totalQty = 0;
+  //     try {
+  //       totalQty = data.result.lineItems.reduce((acc, item) => {
+  //         return acc + item.qty;
+  //       }, 0);
+  //     } catch (error) {
+  //       console.log(error, 'error');
+  //     }
+  //     let receiptData = {
+  //       userId: job.userId,
+  //       amount: total,
+  //       points: 0,
+  //       store: job.store,
+  //       purchaseLocation: job.purchaseLocation,
+  //       qty: totalQty,
+  //     };
+  //     let receiptId = 0;
+  //     if(total === 0) {
+  //       const receiptInfo = await models.Receipt.create(receiptData);
+  //       receiptId = receiptInfo.id;
+  //     }
       
-      const divided =  Math.round(total / 1000);
-      let userPoints = 5;
-      if((divided > 0)){
-        userPoints = divided * 10;
-      } else if  (total >= 500) {
-        userPoints = 10;
-      }
-      receiptData.points = userPoints;
-      if(total > 0) {
-        const receiptInfo = await models.Receipt.create(receiptData);
-        receiptId = receiptInfo.id;
-      }
-      try {
-        await Promise.all(data.result.lineItems.map(async (item) => {
-          // check if item.descClean contains Local Sales
-          const itemDesc = item.descClean.toLowerCase()
-          if(itemDesc.includes('local sales') || itemDesc.includes('tax') || itemDesc.includes('total') || itemDesc.includes('subtotal') || itemDesc.includes('invoice')) {
-            return;
-          }
-          // award 10 points for each 1000 in lineTotal
-          const divided =  Math.round(item.lineTotal / 1000);
-          let points = 5;
-          if((divided > 0)){
-            points = divided * 10;
-          } else if  (item.lineTotal >= 500) {
-            points = 10;
-          } else if (item.lineTotal == 0) {
-            points = 0;
-          }
+  //     const divided =  Math.round(total / 1000);
+  //     let userPoints = 5;
+  //     if((divided > 0)){
+  //       userPoints = divided * 10;
+  //     } else if  (total >= 500) {
+  //       userPoints = 10;
+  //     }
+  //     receiptData.points = userPoints;
+  //     if(total > 0) {
+  //       const receiptInfo = await models.Receipt.create(receiptData);
+  //       receiptId = receiptInfo.id;
+  //     }
+  //     try {
+  //       await Promise.all(data.result.lineItems.map(async (item) => {
+  //         // check if item.descClean contains Local Sales
+  //         const itemDesc = item.descClean.toLowerCase()
+  //         if(itemDesc.includes('local sales') || itemDesc.includes('tax') || itemDesc.includes('total') || itemDesc.includes('subtotal') || itemDesc.includes('invoice')) {
+  //           return;
+  //         }
+  //         // award 10 points for each 1000 in lineTotal
+  //         const divided =  Math.round(item.lineTotal / 1000);
+  //         let points = 5;
+  //         if((divided > 0)){
+  //           points = divided * 10;
+  //         } else if  (item.lineTotal >= 500) {
+  //           points = 10;
+  //         } else if (item.lineTotal == 0) {
+  //           points = 0;
+  //         }
           
-          await models.Brand.create({
-            receiptId,
-            brandName: item.descClean,
-            qty: item.qty,
-            amount: item.lineTotal,
-            points,
-          });
-        }));
-      } catch (error) {
-        console.log(error, 'error');
-      }
+  //         await models.Brand.create({
+  //           receiptId,
+  //           brandName: item.descClean,
+  //           qty: item.qty,
+  //           amount: item.lineTotal,
+  //           points,
+  //         });
+  //       }));
+  //     } catch (error) {
+  //       console.log(error, 'error');
+  //     }
 
-      // check if user has a store with points
-      const pointExist = await models.Point.findOne({
-        where: {
-          store: job.store,
-          userId: job.userId,
-        },
-      });
-      if (pointExist) {
-        // add points to the one in the database
-        await models.Point.update(
-          { points:  parseInt(pointExist.points) + userPoints},
-          { where: { store: job.store, userId: job.userId } },
-        );
-      } else {
-        // create a new point
-        await models.Point.create({
-          userId: job.userId,
-          store: job.store,
-          points: userPoints,
-        });
+  //     // check if user has a store with points
+  //     const pointExist = await models.Point.findOne({
+  //       where: {
+  //         store: job.store,
+  //         userId: job.userId,
+  //       },
+  //     });
+  //     if (pointExist) {
+  //       // add points to the one in the database
+  //       await models.Point.update(
+  //         { points:  parseInt(pointExist.points) + userPoints},
+  //         { where: { store: job.store, userId: job.userId } },
+  //       );
+  //     } else {
+  //       // create a new point
+  //       await models.Point.create({
+  //         userId: job.userId,
+  //         store: job.store,
+  //         points: userPoints,
+  //       });
+  //     }
+  //   });
+  // }
+
+  if(job) {
+    const options = {
+      method: 'GET',
+      uri: `https://api.tabscanner.com/api/result/${job.token}`,
+      headers: {
+        'apikey': API_KEY
       }
+    };
+    const result = await rp(options)
+    const data = JSON.parse(result);
+    if(data.code !== 202) {
+      return;
+    }
+    await models.Job.update(
+      { status:  'completed'},
+      { where: { token: job.token } },
+    );
+    const total = data.result.total || 0;
+    // get total of all qty of items in data.result.lineItems
+    let totalQty = 0;
+    try {
+      totalQty = data.result.lineItems.reduce((acc, item) => {
+        return acc + item.qty;
+      }, 0);
+    } catch (error) {
+      console.log(error, 'error');
+    }
+    let receiptData = {
+      userId: job.userId,
+      amount: total,
+      points: 0,
+      store: job.store,
+      purchaseLocation: job.purchaseLocation,
+      qty: totalQty,
+    };
+    let receiptId = 0;
+    if(total === 0) {
+      const receiptInfo = await models.Receipt.create(receiptData);
+      receiptId = receiptInfo.id;
+    }
+    
+    const divided =  Math.round(total / 1000);
+    let userPoints = 5;
+    if((divided > 0)){
+      userPoints = divided * 10;
+    } else if  (total >= 500) {
+      userPoints = 10;
+    }
+    receiptData.points = userPoints;
+    if(total > 0) {
+      const receiptInfo = await models.Receipt.create(receiptData);
+      receiptId = receiptInfo.id;
+    }
+    try {
+      await Promise.all(data.result.lineItems.map(async (item) => {
+        // check if item.descClean contains Local Sales
+        const itemDesc = item.descClean.toLowerCase()
+        if(itemDesc.includes('local sales') || itemDesc.includes('tax') || itemDesc.includes('total') || itemDesc.includes('subtotal') || itemDesc.includes('invoice')) {
+          return;
+        }
+        // award 10 points for each 1000 in lineTotal
+        const divided =  Math.round(item.lineTotal / 1000);
+        let points = 5;
+        if((divided > 0)){
+          points = divided * 10;
+        } else if  (item.lineTotal >= 500) {
+          points = 10;
+        } else if (item.lineTotal == 0) {
+          points = 0;
+        }
+        
+        await models.Brand.create({
+          receiptId,
+          brandName: item.descClean,
+          qty: item.qty,
+          amount: item.lineTotal,
+          points,
+        });
+      }));
+    } catch (error) {
+      console.log(error, 'error');
+    }
+
+    // check if user has a store with points
+    const pointExist = await models.Point.findOne({
+      where: {
+        store: job.store,
+        userId: job.userId,
+      },
     });
+    if (pointExist) {
+      // add points to the one in the database
+      await models.Point.update(
+        { points:  parseInt(pointExist.points) + userPoints},
+        { where: { store: job.store, userId: job.userId } },
+      );
+    } else {
+      // create a new point
+      await models.Point.create({
+        userId: job.userId,
+        store: job.store,
+        points: userPoints,
+      });
+    }
+    pointR = userPoints;
   }
+  return pointR;
 }
 
 export const getPoints = async (req, res) => {
