@@ -317,6 +317,10 @@ export const getPoints = async (req, res) => {
     where: {
       userId: req.user.id,
     },
+    // order by descending
+    order: [
+      ['createdAt', 'DESC'],
+    ],
   });
   let totalPoints = 0;
   try {
