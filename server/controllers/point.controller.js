@@ -317,10 +317,6 @@ export const getPoints = async (req, res) => {
     where: {
       userId: req.user.id,
     },
-    // order by descending
-    order: [
-      ['createdAt', 'DESC'],
-    ],
   });
   let totalPoints = 0;
   try {
@@ -330,8 +326,18 @@ export const getPoints = async (req, res) => {
   } catch (error) {
     console.log(error, 'error');
   }
+  // get receipts sorted by descending order
+  const receipts = await models.Receipt.findAll({
+    where: {
+      userId: req.user.id,
+    },
+    order: [
+      ['createdAt', 'DESC'],
+    ],
+  });
   const data = {
     stores: points,
+    points: receipts,
     totalPoints,
   }
   return res.status(200).json(responses.success(
