@@ -197,7 +197,7 @@ const addPoints = async (req, res) => {
     {
       store: store,
       userId: req.user.id,
-      points: jobResult,
+      points: jobResult, 
       createdAt: "2022-12-22T09:44:42.429Z",
       updatedAt: "2023-01-13T14:50:23.452Z"
     },
