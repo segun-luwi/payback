@@ -158,11 +158,11 @@ const addPoints = async (req, res) => {
       'Error extracting text from image',
     ));
   }
-  if(data.duplicate == true) {
-    return res.status(400).json(responses.error(
-      'This receipt has already been submitted',
-    ));
-  }
+  // if(data.duplicate == true) {
+  //   return res.status(400).json(responses.error(
+  //     'This receipt has already been submitted',
+  //   ));
+  // }
 
 
   const job = await models.Job.create({
