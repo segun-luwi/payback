@@ -25,98 +25,7 @@ const addPoints = async (req, res) => {
   // "/uploads/" + tmp_name;
   var tmp_path = `${__dirname}/${tmp_name}`;
   // // console.log(tmp_name, 'tmp_name');
-  // console.log(tmp_path, 'tmp_path');
-  // if(!tmp_path) {
-  //   return res.status(400).json(responses.error(
-  //     'Please upload an image',
-  //   ));
-  // }
-
-  // const s3 = new AWS.S3({
-  //   accessKeyId: config.amazon_s3_access_key_id,
-  //   secretAccessKey: config.amazon_s3_access_secret,
-  // })
-
-  // const blob = fs.readFileSync(tmp_path);
-  // console.log(blob, 'blob');
-  // try {
-  //   const uploadedImage = await s3.upload({
-  //     Bucket: config.amazon_s3_bucket,
-  //     Key: tmp_name,
-  //     Body: blob,
-  //     ACL:'public-read',
-  //   }).promise()
-  //   // console.log(uploadedImage.Location, 'uploadedImage');
-  
-  //   const taggun = 'https://api.taggun.io/api/receipt/v1/simple/url';
-  //   const taggunApiKey = config.taggun;
-  //   const jsonData = {
-  //     'url': uploadedImage.Location,
-  //     "headers": {
-  //       "x-custom-key": "string"
-  //     },
-  //     'refresh': false,
-  //     'incognito': false,
-  //     'extractTime': false,
-  //   }
-  //   await axios.post(taggun, jsonData, {
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'apikey': taggunApiKey,
-  //     }
-  //   })
-  //   .then(async (response) => {
-  //     try {
-  //       await s3.deleteObject({
-  //         Bucket: config.amazon_s3_bucket,
-  //         Key: tmp_name,
-  //       }).promise()
-  //     } catch (error) {
-  //       console.log(error, 'error');
-  //     }
-
-        // return res.status(200).json(responses.success(
-  //         'Points updated successfully',
-  //         point,
-  //       ));
-  //     }
-  //     req.body.userId = req.user.id;
-  //     req.body.points = userPoints;
-  //     return res.status(201).json(responses.success(
-  //       'Points added successfully',
-  //       point,
-  //     ));
-  //   })
-  //   .catch(async (error) => {
-  //     console.log(error, 'error');
-  //     try {
-  //       await s3.deleteObject({
-  //         Bucket: config.amazon_s3_bucket,
-  //         Key: tmp_name,
-  //       }).promise()
-  //     } catch (error) {
-  //       console.log(error, 'error');
-  //     }
-  //     return res.status(400).json(responses.error(
-  //       'Error extracting text from image',
-  //     ));
-  //   }
-  //   );
-  // } catch (error) {
-  //   console.log(error, 'error');
-  //   try {
-  //     unlink(tmp_path, (err) => {
-  //       if (err) {
-  //         console.log(err, 'err');
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log(error, 'error');
-  //   }
-  //   return res.status(400).json(responses.error(
-  //     'Error processing image',
-  //   ));
-  // }
+ 
   const files = [req.file];
   const params = {};
   let formData = {
@@ -180,14 +89,16 @@ const addPoints = async (req, res) => {
       userId: req.user.id,
     },
   });
+  const today = new Date();
+  const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   if (!pointExist) {
     pointExist = {
-      id: 4,
       store: store,
       userId: req.user.id,
       points: 10,
-      createdAt: "2022-12-22T09:44:42.429Z",
-      updatedAt: "2023-01-13T14:50:23.452Z"
+      // add created at and updated at for today
+      createdAt: date,
+      updatedAt: date
     }
   }
   // call getResult function to get result
@@ -198,11 +109,11 @@ const addPoints = async (req, res) => {
       store: store,
       userId: req.user.id,
       points: jobResult, 
-      createdAt: "2022-12-22T09:44:42.429Z",
-      updatedAt: "2023-01-13T14:50:23.452Z"
+      createdAt: date,
+      updatedAt: date
     },
   ));
-};
+}
 
 export const getResult = async (jobId = null) => {
   // added for immediate points execution
