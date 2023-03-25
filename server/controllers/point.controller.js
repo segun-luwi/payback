@@ -26,7 +26,7 @@ const addPoints = async (req, res) => {
   var tmp_path = `${__dirname}/${tmp_name}`;
   // // console.log(tmp_name, 'tmp_name');
  
-  const files = [req.file];
+  // const files = [req.file];
   const params = {};
   let formData = {
     file: []
@@ -51,7 +51,7 @@ const addPoints = async (req, res) => {
   };
 
   const result = await rp(options)
-  console.log(result)
+  // console.log(result)
   try {
     unlink(tmp_path, (err) => {
       if (err) {
@@ -102,17 +102,25 @@ const addPoints = async (req, res) => {
     }
   }
   // call getResult function to get result
-  const jobResult = await getResult(job.id);
-  return res.status(200).json(responses.success(
-    'Receipt submitted successfully',
-    {
-      store: store,
-      userId: req.user.id,
-      points: jobResult, 
-      createdAt: date,
-      updatedAt: date
-    },
-  ));
+  let jobResult;
+  getResult(job.id).then((result) => {
+    jobResult = result;
+    return res.status(200).json(responses.success(
+      'Receipt submitted successfully',
+      {
+        store: store,
+        userId: req.user.id,
+        points: jobResult, 
+        createdAt: date,
+        updatedAt: date
+      },
+    ));
+  }).catch((error) => {
+    console.log(error, 'error');
+    return res.status(400).json(responses.error(
+      'Error getting result',
+    ));
+  });
 }
 
 export const getResult = async (jobId = null) => {
