@@ -358,7 +358,7 @@ export const scanReceipts = async (req, res) => {
     // check check if its daily, weekly or monthly
     const { startDate, endDate } = req.query;
     let receipts;
-    if(startDate & endDate) {
+    if(startDate && endDate) {
       receipts = await models.Receipt.count({
         where: {
           createdAt: {
