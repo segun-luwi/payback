@@ -45,7 +45,7 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
