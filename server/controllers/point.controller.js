@@ -104,7 +104,7 @@ const addPoints = async (req, res) => {
   // call getResult function to get result
   let jobResult;
   await getResult(job.id).then((result) => {
-    jobResult = result;
+    jobResult = result || 0;
     return res.status(200).json(responses.success(
       'Receipt submitted successfully',
       {
@@ -352,8 +352,10 @@ export const getResult = async (jobId = null) => {
       });
     }
     pointR = userPoints;
+    return pointR;
+  } else {
+    return pointR;
   }
-  return pointR;
 }
 
 export const getPoints = async (req, res) => {
