@@ -103,7 +103,7 @@ const addPoints = async (req, res) => {
   }
   // call getResult function to get result
   let jobResult;
-  getResult(job.id).then((result) => {
+  await getResult(job.id).then((result) => {
     jobResult = result;
     return res.status(200).json(responses.success(
       'Receipt submitted successfully',
