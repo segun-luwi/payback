@@ -251,7 +251,6 @@ export const getResult = async (jobId = null) => {
   // }
 
   if(job) {
-    return 52;
     // delay for 4 seconds
     const options = {
       method: 'GET',
@@ -265,6 +264,7 @@ export const getResult = async (jobId = null) => {
     if(data.code !== 202) {
       return;
     }
+    return 56;
     await models.Job.update(
       { status:  'completed'},
       { where: { id: job.id } },
