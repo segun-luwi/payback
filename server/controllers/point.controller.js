@@ -132,6 +132,7 @@ export const getResult = async (jobId = null) => {
   //     status: 'pending',
   //   },
   // });
+  return 53;
   const jobGotten = await models.Job.findOne({
     where: {
       status: 'pending',
