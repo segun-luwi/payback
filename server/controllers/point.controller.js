@@ -132,13 +132,16 @@ export const getResult = async (jobId = null) => {
   //     status: 'pending',
   //   },
   // });
-  const job = await models.Job.findOne({
+  const jobGotten = await models.Job.findOne({
     where: {
-      // status: 'pending',
+      status: 'pending',
       id: jobId,
     },
   });
-  
+  let job;
+  if(jobGotten) {
+    job = jobGotten.dataValues;
+  }
   // if(jobs.length > 0) {
   //   await jobs.map (async (job) => {
   //     const options = {
@@ -263,7 +266,7 @@ export const getResult = async (jobId = null) => {
     }
     await models.Job.update(
       { status:  'completed'},
-      { where: { token: job.token } },
+      { where: { id: job.id } },
     );
     const total = data.result.total || 0;
     // get total of all qty of items in data.result.lineItems
