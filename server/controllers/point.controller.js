@@ -248,6 +248,8 @@ export const getResult = async (jobId = null) => {
   // }
 
   if(job) {
+    // delay for 4 seconds
+    await new Promise(resolve => setTimeout(resolve, 4000));
     const options = {
       method: 'GET',
       uri: `https://api.tabscanner.com/api/result/${job.token}`,
