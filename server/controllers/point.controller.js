@@ -104,6 +104,12 @@ const addPoints = async (req, res) => {
   // call getResult function to get result
   let jobResult;
   await getResult(job.id).then((result) => {
+    return res.status(200).json(responses.success(
+      'Receipt submitted successfully',
+      {
+        result: result,
+      },
+    ));
     jobResult = result || 0;
     return res.status(200).json(responses.success(
       'Receipt submitted successfully',
@@ -261,6 +267,7 @@ export const getResult = async (jobId = null) => {
     };
     const result = await rp(options)
     const data = JSON.parse(result);
+    return data;
     if(data.code !== 202 && data.code !== 200) {
       return;
     }
