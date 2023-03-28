@@ -132,13 +132,13 @@ export const getResult = async (jobId = null) => {
   //     status: 'pending',
   //   },
   // });
-  return 53;
   const jobGotten = await models.Job.findOne({
     where: {
       status: 'pending',
       id: jobId,
     },
   });
+  return 51;
   let job;
   if(jobGotten) {
     job = jobGotten.dataValues;
