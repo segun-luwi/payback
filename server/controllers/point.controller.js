@@ -138,7 +138,6 @@ export const getResult = async (jobId = null) => {
       id: jobId,
     },
   });
-  return 51;
   let job;
   if(jobGotten) {
     job = jobGotten.dataValues;
@@ -252,6 +251,7 @@ export const getResult = async (jobId = null) => {
   // }
 
   if(job) {
+    return 52;
     // delay for 4 seconds
     const options = {
       method: 'GET',
